@@ -1,0 +1,221 @@
+* {
+    font-family: 'Blinker', sans-serif;
+}
+
+.title {
+    width: 80%;
+    height: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+    border: rgb(60, 60, 175);
+    border-style: solid;
+    padding: 40px;
+}
+
+body {
+    width: 100vw;
+    min-height: 100vh;
+    height: 100%;    
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;    
+    background-color: rgb(60, 60, 175);
+}
+
+h3 {
+    text-align: justify;
+    width: 60%;
+}
+
+#main{
+    display: flex;
+    align-items: center;    
+    flex-direction: column;
+    justify-content: space-evenly;
+    min-height: 100vh;
+    width: 50%;
+    height: 100%;
+    background-color: rgb(173, 173, 236);
+}
+
+.sign-or-log {
+    width: 75%;
+    padding: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border: rgb(60, 60, 175);
+    border-style: solid;
+}
+
+.sign-or-log button {
+    width: 150px;
+    height: 75px;
+    font-size: large;
+}
+
+.dashboard {
+    display: flex;
+    align-items: center;    
+    flex-direction: column;    
+    min-height: 100vh;
+    width: 100%;
+    height: 100%;    
+}
+
+#dashboard-content{
+    width: 100%;
+    text-align: center;
+}
+
+.entry  {
+    width: auto;      
+    padding: 80px;
+    padding-right: 150px;
+    padding-left: 150px;
+    border: rgb(60, 60, 175);
+    border-style: solid;    
+}
+
+.entry form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;    
+}
+
+ol li {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 10px;
+}
+
+ul li {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 5px;    
+}
+
+ul {
+    
+    list-style-type: none;
+    padding: 5%;
+}
+
+li label {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#welcome {
+    font-weight: bold;
+    color: blue;
+    font-size: large;
+    text-align: center;
+}
+
+#list-title {
+    text-align: center;
+    font-size: large;
+    color: blue;
+}
+
+#list-functions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 40px;
+}
+
+#list-functions > * {
+    margin: 5px;
+}
+
+#list-name-form {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 20px;
+}
+
+#list-name-form > * {
+    margin: 5px;
+}
+
+#add-list-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin: 20px;
+}
+
+nav {
+    margin-top: 15px;
+    margin-bottom: 50px;
+    margin-right: 10px;
+    align-self: flex-end;
+}
+
+nav a {
+    margin: 0px;
+    text-decoration: none;
+    padding: 10px;
+    border: rgb(60, 60, 175);
+    border-style: solid;
+}
+
+#change-user-info {
+    width: 40%;
+    padding: 10px;
+}
+
+#change-user-info-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 5px;
+}
+
+#change-user-info-form > * {
+    margin: 5px;
+}
+
+#cancel-user-changes button {
+    width: 100%;
+}
+
+.unloaded {
+    display: none;
+}
+
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
+.add-button {
+    border-radius: 50%;
+    background-color: rgb(102, 241, 125);
+    
+}
+
+.function-btn {
+    border-radius: 15%;
+    background-color: rgb(70, 70, 247);
+    padding: 3px;
+}
+
+.remove-btn {
+    border-radius: 25%;
+    background-color: rgb(196, 46, 46);
+    padding: 3px;
+}

@@ -191,7 +191,8 @@ const displayLists = () => {
 }
 
 const displayList = (e) => {
-    e.preventDefault();   
+    e.preventDefault();
+    console.log(e);   
     for(i=0; i<currentUser.lists.length; i++) {
         e.path[0].innerText === currentUser.lists[i].name ? currentList = currentUser.lists[i] : currentList
     }    

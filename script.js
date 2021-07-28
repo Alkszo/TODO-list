@@ -192,9 +192,9 @@ const displayLists = () => {
 
 const displayList = (e) => {
     e.preventDefault();
-    console.log(e);   
+    let path = e.composedPath();
     for(i=0; i<currentUser.lists.length; i++) {
-        e.path[0].innerText === currentUser.lists[i].name ? currentList = currentUser.lists[i] : currentList
+        path[0].innerText === currentUser.lists[i].name ? currentList = currentUser.lists[i] : currentList
     }    
     for (i=0; i<currentList.items.length; i++) {
         let obj = Object.assign({}, currentList.items[i]);        

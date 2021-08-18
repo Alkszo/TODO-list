@@ -17,7 +17,8 @@ const newList = document.getElementById('new-list');
 const listNameForm = document.getElementById('list-name-form');
 const listLinks = document.getElementsByClassName('list-link');
 const listTitle = document.getElementById('list-title');
-const addListItem = document.getElementById('add-list-item');
+const addListItem = document.getElementById('new-item-form');
+const addTimer = document.getElementById('add-timer');
 const nameAlreadyUsed = document.getElementById('name-already-used');
 const nameInUse = document.getElementById('name-in-use');
 const save = document.getElementById('save');
@@ -33,6 +34,7 @@ const changeUserName = document.getElementById('change-user-name');
 const confirmPassChange = document.getElementById('confirm-pass-change');
 const submitUserChanges = document.getElementById('change-user-info-form');
 const cancelUserChanges = document.getElementById('cancel-user-changes');
+const img = '/alarm-clock.jpg';
 
 let editedItems = [];
 let currentUser;
@@ -319,16 +321,178 @@ listNameForm.addEventListener('submit', (e) => {
     
 })
 
+const checkNotificationPromise = () => {
+    try {
+      Notification.requestPermission().then();
+    } catch(e) {
+      return false;
+    }
+    return true;
+}
+
+const askPermission = () => {
+    const allower = document.getElementById('allow-notifications');
+    const handlePermission = (permission) => {
+        if(Notification.permission === 'denied') {
+            allower.classList.remove('unloaded');
+        } else if(Notification.permission === 'default') {
+            allower.classList.remove('unloaded');
+        } else {
+            allower.classList.add('unloaded')
+        }
+    }
+    if(checkNotificationPromise()) {
+        Notification.requestPermission()
+        .then((permission) => {
+          handlePermission(permission);
+        })
+      } else {
+        Notification.requestPermission((permission) =>
+          {handlePermission(permission);
+          });
+      }
+    
+}
+
+addTimer.addEventListener('change', e => {
+    if(e.target.checked) {
+        const timeInput = document.createElement('DIV');
+        timeInput.id = 'time-input';
+        timeInput.innerHTML = `
+                        <div>
+                            <div><label for="hour">Hour:</label><input id="hour" type="number" required></div>
+                            <div><label for="minute">Minute:</label><input id="minute" type="number" required></div>
+                        </div>
+                        <div>
+                            <div>
+                                <label for="day">Day:</label>
+                                <select id="day" required>                                
+                                    <option value="01">01</option>
+                                    <option value="02">02</option>
+                                    <option value="03">03</option>
+                                    <option value="04">04</option>
+                                    <option value="05">05</option>
+                                    <option value="06">06</option>
+                                    <option value="07">07</option>
+                                    <option value="08">08</option>
+                                    <option value="09">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                    <option value="18">18</option>
+                                    <option value="19">19</option>
+                                    <option value="20">20</option>
+                                    <option value="21">21</option>
+                                    <option value="22">22</option>
+                                    <option value="23">23</option>
+                                    <option value="24">24</option>
+                                    <option value="25">25</option>
+                                    <option value="26">26</option>
+                                    <option value="27">27</option>
+                                    <option value="28">28</option>
+                                    <option value="29">29</option>
+                                    <option value="30">30</option>
+                                    <option value="31">31</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="month">Month:</label>
+                                <select id="month" required>
+                                    <option value="0">January</option>
+                                    <option value="1">February</option>
+                                    <option value="2">March</option>
+                                    <option value="3">April</option>
+                                    <option value="4">May</option>
+                                    <option value="5">June</option>
+                                    <option value="6">July</option>
+                                    <option value="7">August</option>
+                                    <option value="8">September</option>
+                                    <option value="9">October</option>
+                                    <option value="10">November</option>
+                                    <option value="11">December</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="year">Year:</label>
+                                <select id="year" required>
+                                    <option value="2021">2021</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>                
+                                </select>
+                            </div>                            
+                        </div>
+                        <p id="allow-notifications" class="red unloaded">Please allow notifications in your browser</p>
+        `;
+        document.getElementById('new-item-form').insertBefore(timeInput, document.getElementById('submit-item-btn'));
+        askPermission();
+    } else {
+        document.getElementById('time-input').remove();
+    }
+})
+
+const getAlarmDate = () => {
+    const hour = document.getElementById('hour');
+    const minute = document.getElementById('minute');
+    const day = document.getElementById('day');
+    const month = document.getElementById('month');
+    const year = document.getElementById('year');
+    const monthsStr = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    if(hour.value < 0) {
+        hour.value = '0'
+      }
+      if(hour.value > 23) {
+        hour.value = '23'
+      }
+      const hourClock = parseInt(hour.value).toLocaleString('en-US', {
+        minimumIntegerDigits: 2,
+      })
+      if(minute.value < 0) {
+        minute.value = '0'
+      }
+      if(minute.value > 59) {
+        minute.value = '59'
+      }
+      const minuteClock = parseInt(minute.value).toLocaleString('en-US', {
+        minimumIntegerDigits: 2,
+      })
+      const shortMonths = ['3', '5', '7', '10']
+      if (shortMonths.includes(month.value) && day.value > 30) {
+        day.value = 30
+      }
+      if (month.value === '1' && day.value > 28) {
+        day.value = year.value === "2024" ? 29 : 28
+      }
+      const alarmDate = new Date(year.value, month.value, day.value, hour.value, minute.value)
+      const alarmLog = `${hourClock}:${minuteClock} - ${day.value} ${monthsStr[month.value]} ${year.value}`
+      return [alarmDate, alarmLog]
+}
+
 addListItem.addEventListener('submit', (e) => {
     const itemName = document.getElementById('item-name');
     const itemsList = document.getElementById('items-list');
+    let newItemObj;
     e.preventDefault();
     if (!itemName.value) {
         return
     } else {
     newItem = document.createElement('LI');
-    newItem.innerText = itemName.value;
-    editedItems.push({item: itemName.value, done: false});
+
+    if(addTimer.checked) {
+        newItemObj = {item: itemName.value, done: false, alarm: getAlarmDate()[0]};
+        newItem.innerText = `${itemName.value} ${getAlarmDate()[1]}`;
+    } else {
+        newItem.innerText = itemName.value;
+        newItemObj = {item: itemName.value, done: false}
+    }
+    editedItems.push(newItemObj);
     const itemNumber = itemsList.children.length;
     newItem.id = 'item' + itemNumber;
     const label = document.createElement('LABEL');
@@ -365,6 +529,9 @@ addListItem.addEventListener('submit', (e) => {
     newItem.appendChild(label);
     newItem.appendChild(removeItem);
     itemsList.appendChild(newItem); 
+    if (document.getElementById('time-input')) {
+        document.getElementById('time-input').remove();
+    }
     addListItem.reset();
     }
 })
@@ -398,6 +565,12 @@ save.addEventListener('click', () => {
         }
     }
     local.setItem('users', JSON.stringify(users))
+    console.log(users, local)
+    for(const i of currentUser.lists) {
+        for(const j of i.items) {
+            console.log(j)
+        }
+    }
 })
 
 backToDashboard.addEventListener('click', () => {
@@ -460,11 +633,33 @@ logOut.addEventListener('click', (e) => {
     listInside.classList.add('unloaded');
     title.classList.remove('unloaded');
     signOrLog.classList.remove('unloaded');
-    dashboard.classList.add('unloaded');    
+    dashboard.classList.add('unloaded');
+    changeUserInfo.classList.add('unloaded');
+    currentUser = null;
+    currentList = null;    
 })
+
+const checkAlarms = () => {
+    const now = Date.now()
+    if(currentUser) {
+        for(const i of currentUser.lists) {
+            for(const j of i.items) {
+                const alparsed = Date.parse(j.alarm)
+                if((now - alparsed) > 0 && (now - alparsed) < 2000) {
+                    new Notification(`${j.item}`, { body: `From list ${i.name} ${j.alarm.getHours().toLocaleString('en-US', {minimumIntegerDigits: 2,})}:`
+                    + `${j.alarm.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2,})}`, 
+                    icon: img});
+                }
+            }
+        }
+    } else {
+        return
+    }
+}
 
 
 window.onload = () => {
+    setInterval(checkAlarms, 1000)
     if (local.users) {
         users = JSON.parse(local.users)
     }

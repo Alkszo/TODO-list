@@ -105,10 +105,17 @@
                         <button type="submit" class="function-btn">Save list name</button>
                     </form>
                     <p id="name-in-use" class="unloaded red">This name is already used for one of your lists! Please select another one.</p>
-                    <form id="add-list-item" method="post">
-                        <label for='item-name'>Add new item:</label>
-                        <input type="text" id="item-name" name="item-name">
-                        <button type="submit" class="add-button">+</button>
+                    <form id="new-item-form" method="post">
+                        <div id="add-list-item">
+                            <label for="item-name">New item name:</label>
+                            <input type="text" id="item-name" name="item-name" required>                            
+                        </div>
+                        <div id="item-time-check">
+                            <label for="add-timer">Add notification reminder</label>
+                            <input type="checkbox" id="add-timer" name="add-timer" />
+                        </div>
+                        <button id="submit-item-btn" type="submit" class="add-button">Add new item</button>
+                    
                     </form>
                     <div id="list-div"></div>
                     <div id="list-functions">

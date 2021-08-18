@@ -125,6 +125,22 @@ li label {
     color: blue;
 }
 
+#time-input {
+    display: flex;
+    flex-direction: column;
+    margin: 5%;
+    margin-top: 1%;
+}
+
+#time-input > div {
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+    width: 75%;
+    justify-content: space-between;
+    margin: 1%;
+}
+
 #list-functions {
     display: flex;
     flex-direction: row;
@@ -148,11 +164,34 @@ li label {
     margin: 5px;
 }
 
+#new-item-form {
+    display: flex;
+    flex-direction: column;
+}
+
 #add-list-item {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     margin: 20px;
+}
+
+#item-time-check {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin: 20px;
+}
+
+#submit-item-btn {
+    align-self: flex-end;
+    border-radius: 15%;
+    margin: 20px;
+}
+
+#allow-notifications {
+    text-align: center;
+    font-weight: 550;
 }
 
 nav {

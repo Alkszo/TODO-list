@@ -93,6 +93,19 @@ ol li {
     margin: 10px;
 }
 
+ol li > * {
+    align-self: center;
+}
+
+ol li div > p {
+    margin: 0;
+}
+
+ol li > label {
+    position: absolute;
+    margin-left: 18%;
+}
+
 ul li {
     width: 100%;
     display: flex;
@@ -141,15 +154,21 @@ li label {
     margin: 1%;
 }
 
+.alarm-description {
+    font-size: small;
+    color: rgb(51, 51, 51);
+}
+
 #list-functions {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: space-evenly;
     margin-top: 40px;
 }
 
 #list-functions > * {
+    height: 40px;
     margin: 5px;
 }
 

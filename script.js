@@ -36,7 +36,7 @@ const submitUserChanges = document.getElementById('change-user-info-form');
 const cancelUserChanges = document.getElementById('cancel-user-changes');
 const img = '/alarm-clock.jpg';
 
-let editedItems = [];
+//let editedItems = [];
 let currentUser;
 let currentList;
 let users = [];
@@ -197,19 +197,31 @@ const displayList = (e) => {
     let path = e.composedPath();
     for(i=0; i<currentUser.lists.length; i++) {
         path[0].innerText === currentUser.lists[i].name ? currentList = currentUser.lists[i] : currentList
-    }    
-    for (i=0; i<currentList.items.length; i++) {
-        let obj = Object.assign({}, currentList.items[i]);        
-        editedItems.push(obj);        
-    } 
+    }
     listTitle.innerText = currentList.name;
     local.setItem('currentList', currentList.name)
     const itemsList = document.createElement('OL');
     itemsList.id = 'items-list';
     for(i=0; i<currentList.items.length; i++) {
-        const items = currentList.items       
+        const items = currentList.items;    
         const item = document.createElement('LI');
-        item.innerText = items[i].item;
+        if(items[i].alarm) {
+            const monthsStr = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+            const alarmDate = new Date(items[i].alarm)
+            const hourClock = parseInt(alarmDate.getHours()).toLocaleString('en-US', {
+                minimumIntegerDigits: 2,
+            })
+            const minuteClock = parseInt(alarmDate.getMinutes()).toLocaleString('en-US', {
+                minimumIntegerDigits: 2,
+            })
+            const dayParsed = parseInt(alarmDate.getDate()).toLocaleString('en-US', {
+                minimumIntegerDigits: 2,
+            })
+            const alarmLog = `${hourClock}:${minuteClock} - ${dayParsed} ${monthsStr[alarmDate.getMonth()]} ${alarmDate.getFullYear()}`
+            item.innerHTML = `<div><p>${items[i].item}</p> <p class="alarm-description">${alarmLog}</p></div>`;
+        } else {
+            item.innerText = items[i].item;
+        }
         if(items[i].done) {
             item.classList.add('green')
         }
@@ -221,13 +233,12 @@ const displayList = (e) => {
         isDone.checked = items[i].done;
         isDone.id = i;
         isDone.addEventListener('change', (e) => {
-            editedItems[isDone.id].done = !editedItems[isDone.id].done
+            items[isDone.id].done = !items[isDone.id].done
             if (isDone.checked) {
                 item.classList.add('green')
             } else {
                 item.classList.remove('green')
-            }
-          
+            }        
         })
         const removeItem = document.createElement('BUTTON');
         removeItem.innerText = 'remove item';
@@ -236,7 +247,8 @@ const displayList = (e) => {
         removeItem.addEventListener('click', () => {
            const nr = removeItem.id.substring(11);
            document.getElementById(`item${nr}`).remove();
-           editedItems.splice(nr, 1);
+           items.splice(nr, 1);
+           local.setItem('users', JSON.stringify(users))
            for (i=0; i<itemsList.children.length; i++) {
             itemsList.children[i].id = 'item' + i;            
             itemsList.children[i].children[1].id = 'remove-item' + i;
@@ -256,7 +268,7 @@ const displayList = (e) => {
     passNotMatch.classList.add('unloaded');
     dashboardContent.classList.add('unloaded');
     document.getElementById('lists').remove();
-    listInside.classList.remove('unloaded');    
+    listInside.classList.remove('unloaded');
 }
 
 newList.addEventListener('submit', (e) => {
@@ -317,6 +329,7 @@ listNameForm.addEventListener('submit', (e) => {
         currentList.name = newName;
         nameInUse.classList.add('unloaded');
         listTitle.innerText = newName;
+        local.setItem('users', JSON.stringify(users))
     }
     
 })
@@ -358,15 +371,17 @@ addTimer.addEventListener('change', e => {
     if(e.target.checked) {
         const timeInput = document.createElement('DIV');
         timeInput.id = 'time-input';
+        const currentTime = new Date
+
         timeInput.innerHTML = `
                         <div>
-                            <div><label for="hour">Hour:</label><input id="hour" type="number" required></div>
-                            <div><label for="minute">Minute:</label><input id="minute" type="number" required></div>
+                            <div><label for="hour">Hour:</label><input id="hour" type="number" value=${currentTime.getHours()} required></div>
+                            <div><label for="minute">Minute:</label><input id="minute" type="number" value=${currentTime.getMinutes()} required></div>
                         </div>
                         <div>
                             <div>
                                 <label for="day">Day:</label>
-                                <select id="day" required>                                
+                                <select id="day" value="05" required>                                
                                     <option value="01">01</option>
                                     <option value="02">02</option>
                                     <option value="03">03</option>
@@ -420,6 +435,7 @@ addTimer.addEventListener('change', e => {
                             <div>
                                 <label for="year">Year:</label>
                                 <select id="year" required>
+                                    <option value="2020">2020</option>
                                     <option value="2021">2021</option>
                                     <option value="2022">2022</option>
                                     <option value="2023">2023</option>
@@ -431,7 +447,28 @@ addTimer.addEventListener('change', e => {
                         </div>
                         <p id="allow-notifications" class="red unloaded">Please allow notifications in your browser</p>
         `;
+
         document.getElementById('new-item-form').insertBefore(timeInput, document.getElementById('submit-item-btn'));
+        const currentYear = currentTime.getFullYear();
+        const monthsStr = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const currentMonth = monthsStr[currentTime.getMonth()];
+        const stringedDay = currentTime.getDate().toString();
+        const currentDay = stringedDay.length > 1 ? stringedDay : `0${stringedDay}`;
+        for (const prop of document.getElementById('year').childNodes) {
+            if (prop.nodeName === 'OPTION' && prop.innerText === currentYear.toString()) {
+                    prop.setAttribute('selected', '')
+            }
+        }
+        for (const prop of document.getElementById('month').childNodes) {
+            if (prop.nodeName === 'OPTION' && prop.innerText === currentMonth) {
+                    prop.setAttribute('selected', '')
+            }
+        }
+        for (const prop of document.getElementById('day').childNodes) {
+            if (prop.nodeName === 'OPTION' && prop.innerText === currentDay) {
+                    prop.setAttribute('selected', '')
+            }
+        }
         askPermission();
     } else {
         document.getElementById('time-input').remove();
@@ -487,12 +524,12 @@ addListItem.addEventListener('submit', (e) => {
 
     if(addTimer.checked) {
         newItemObj = {item: itemName.value, done: false, alarm: getAlarmDate()[0]};
-        newItem.innerText = `${itemName.value} ${getAlarmDate()[1]}`;
+        newItem.innerHTML = `<div><p>${itemName.value}</p> <p class="alarm-description">${getAlarmDate()[1]}</p></div>`;
     } else {
         newItem.innerText = itemName.value;
         newItemObj = {item: itemName.value, done: false}
     }
-    editedItems.push(newItemObj);
+    currentList.items.push(newItemObj);
     const itemNumber = itemsList.children.length;
     newItem.id = 'item' + itemNumber;
     const label = document.createElement('LABEL');
@@ -505,9 +542,8 @@ addListItem.addEventListener('submit', (e) => {
     removeItem.id = 'remove-item' + itemNumber;
     removeItem.classList.add('remove-btn');
 
-    isDone.addEventListener('change', (e) => {
-        
-        editedItems[isDone.id].done = !editedItems[isDone.id].done
+    isDone.addEventListener('change', (e) => {        
+        currentList.items[isDone.id].done = !currentList.items[isDone.id].done
         if (isDone.checked) {
             document.getElementById('item' + isDone.id).classList.add('green')
         } else {
@@ -518,7 +554,7 @@ addListItem.addEventListener('submit', (e) => {
     removeItem.addEventListener('click', () => {
             const nr = removeItem.id.substring(11);
             document.getElementById(`item${nr}`).remove();
-            editedItems.splice(nr, 1);
+            currentList.items.splice(nr, 1);
             for (i=0; i<itemsList.children.length; i++) {
             itemsList.children[i].id = 'item' + i;            
             itemsList.children[i].children[1].id = 'remove-item' + i;
@@ -528,49 +564,13 @@ addListItem.addEventListener('submit', (e) => {
     label.appendChild(isDone);
     newItem.appendChild(label);
     newItem.appendChild(removeItem);
-    itemsList.appendChild(newItem); 
+    itemsList.appendChild(newItem);
     if (document.getElementById('time-input')) {
         document.getElementById('time-input').remove();
     }
     addListItem.reset();
     }
-})
-
-saveAndBack.addEventListener('click', () => {
-    currentList.items = currentList.items.slice(0, editedItems.length);
-    for (i=0; i<editedItems.length; i++) {
-        if(currentList.items[i]) {
-            currentList.items[i] = Object.assign(currentList.items[i], editedItems[i])
-        } else {
-            currentList.items.push(Object.assign({}, editedItems[i]))
-        }
-    }   
-        local.setItem('users', JSON.stringify(users));
-        local.removeItem('currentList');
-        document.getElementById('items-list').remove();
-        listInside.classList.add('unloaded');
-        displayLists();
-        dashboardContent.classList.remove('unloaded');
-        editedItems = [];
-        listTitle.innerText = '';        
-})
-
-save.addEventListener('click', () => { 
-    currentList.items = currentList.items.slice(0, editedItems.length);
-    for (i=0; i<editedItems.length; i++) {
-        if(currentList.items[i]) {
-            currentList.items[i] = Object.assign(currentList.items[i], editedItems[i])
-        } else {
-            currentList.items.push(Object.assign({}, editedItems[i]))
-        }
-    }
     local.setItem('users', JSON.stringify(users))
-    console.log(users, local)
-    for(const i of currentUser.lists) {
-        for(const j of i.items) {
-            console.log(j)
-        }
-    }
 })
 
 backToDashboard.addEventListener('click', () => {
@@ -579,7 +579,7 @@ backToDashboard.addEventListener('click', () => {
         listInside.classList.add('unloaded');
         displayLists();
         dashboardContent.classList.remove('unloaded');
-        editedItems = [];
+        local.setItem('users', JSON.stringify(users));
         listTitle.innerText = '';   
 })
 
@@ -668,17 +668,29 @@ window.onload = () => {
         for(i=0; i<currentUser.lists.length; i++) {
             local.currentList === currentUser.lists[i].name ? currentList = currentUser.lists[i] : currentList
         }
-        for (i=0; i<currentList.items.length; i++) {
-            let obj = Object.assign({}, currentList.items[i]);        
-            editedItems.push(obj);        
-        } 
         listTitle.innerText = currentList.name;
     const itemsList = document.createElement('OL');
     itemsList.id = 'items-list';
     for(i=0; i<currentList.items.length; i++) {
         const items = currentList.items       
         const item = document.createElement('LI');
-        item.innerText = items[i].item;
+        if(items[i].alarm) {
+            const monthsStr = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+            const alarmDate = new Date(items[i].alarm)
+            const hourClock = parseInt(alarmDate.getHours()).toLocaleString('en-US', {
+                minimumIntegerDigits: 2,
+            })
+            const minuteClock = parseInt(alarmDate.getMinutes()).toLocaleString('en-US', {
+                minimumIntegerDigits: 2,
+            })
+            const dayParsed = parseInt(alarmDate.getDate()).toLocaleString('en-US', {
+                minimumIntegerDigits: 2,
+            })
+            const alarmLog = `${hourClock}:${minuteClock} - ${dayParsed} ${monthsStr[alarmDate.getMonth()]} ${alarmDate.getFullYear()}`
+            item.innerHTML = `<div><p>${items[i].item}</p> <p class="alarm-description">${alarmLog}</p></div>`;
+        } else {
+            item.innerText = items[i].item;
+        }
         if(items[i].done) {
             item.classList.add('green')
         }
@@ -690,7 +702,7 @@ window.onload = () => {
         isDone.checked = items[i].done;
         isDone.id = i;
         isDone.addEventListener('change', (e) => {
-            editedItems[isDone.id].done = !editedItems[isDone.id].done
+            currentList[isDone.id].done = !currentList[isDone.id].done
             if (isDone.checked) {
                 item.classList.add('green')
             } else {
@@ -705,7 +717,7 @@ window.onload = () => {
         removeItem.addEventListener('click', () => {
            const nr = removeItem.id.substring(11);
            document.getElementById(`item${nr}`).remove();
-           editedItems.splice(nr, 1);
+           currentList.splice(nr, 1);
            for (i=0; i<itemsList.children.length; i++) {
             itemsList.children[i].id = 'item' + i;            
             itemsList.children[i].children[1].id = 'remove-item' + i;

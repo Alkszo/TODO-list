@@ -646,7 +646,7 @@ const checkAlarms = () => {
             for(const j of i.items) {
                 const alparsed = Date.parse(j.alarm)
                 if((now - alparsed) > 0 && (now - alparsed) < 2000) {
-                    new Notification(`${j.item}`, { body: `From list ${i.name} ${j.alarm.getHours().toLocaleString('en-US', {minimumIntegerDigits: 2,})}:`
+                    new Notification(`${j.item}`, { body: `from ${i.name} ${j.alarm.getHours().toLocaleString('en-US', {minimumIntegerDigits: 2,})}:`
                     + `${j.alarm.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2,})}`, 
                     icon: img});
                 }
